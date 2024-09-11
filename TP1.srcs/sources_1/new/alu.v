@@ -21,7 +21,8 @@
 
 
 module alu
-#(
+#(  
+    // Parámetros
     parameter NB_DATA = 4,   //Ancho Bus de datos
     parameter NB_OPERATION = 6  //Ancho Bus de operaciones
 )
@@ -46,7 +47,10 @@ always @(*) begin
         6'b000011: tmp = ~(in_data_a | in_data_b);  // SRA CHECKEAR ESTO, LA CONSIGNA PARECE ESTAR MAL
         6'b000010: tmp = in_data_a < in_data_b; // SRL CHECKEAR ESTO, LA CONSIGNA PARECE ESTAR MAL
         6'b100111: tmp = ~(in_data_a | in_data_b);  // NOR (~|)
+        default:   tmp = {NB_DATA{1'b1}};  // Todos los bits en 1
     endcase
 end
+
+assign out_data = tmp;
 
 endmodule
