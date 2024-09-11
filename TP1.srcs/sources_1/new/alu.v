@@ -23,26 +23,29 @@
 module alu
 #(
     parameter NB_DATA = 4,   //Ancho Bus de datos
-    parameter NB_PARAM = 6
+    parameter NB_OPERATION = 6  //Ancho Bus de operaciones
 )
-(
-    input wire [NB_DATA-1:0] in_datoA,
-    input wire [NB_DATA-1:0] in_datoB,
-    input wire [NB_PARAM-1:0] in_opALU,              //Operando de 6 bits
-    output wire [NB_DATA-1:0] out_ResLeds,
-    output reg [NB_DATA-1:0] out_resltReg
+(   
+    // Definición de Puertos del módulo
+    input wire signed [NB_DATA-1:0] in_data_a,  //Dato de 4 bits
+    input wire signed [NB_DATA-1:0] in_data_b,  //Dato de 4 bits
+    input wire [NB_OPERATION-1:0] in_operation,  //Operando de 6 bits
+    output wire signed [NB_DATA-1:0] out_data  //Resultado de 4 bits
 );
 
+// Declaración de señales internas del módulo
+reg [NB_DATA-1:0] tmp;
+
 always @(*) begin
-    case (in_opALU)
-        6'b100000: out_resltReg = in_datoA + in_datoB;
-        6'b100010: out_resltReg = in_datoA - in_datoB;
-        6'b100100: out_resltReg = in_datoA & in_datoB;
-        6'b100101: out_resltReg = in_datoA | in_datoB;
-        6'b100110: out_resltReg = in_datoA ^ in_datoB;
-        6'b000011: out_resltReg = ~(in_datoA | in_datoB);
-        6'b000010: out_resltReg = (in_datoA < in_datoB) ? 1 : 0;
-        6'b100111: out_resltReg = in_datoA * in_datoB;
+    case (in_operation)
+        6'b100000: tmp = in_data_a + in_data_b;  // SUMA (+)
+        6'b100010: tmp = in_data_a - in_data_b;  // RESTA (-)
+        6'b100100: tmp = in_data_a & in_data_b;  // AND (&)
+        6'b100101: tmp = in_data_a | in_data_b;  // OR (|)
+        6'b100110: tmp = in_data_a ^ in_data_b;  // XOR ~ EXCLUSIVE OR (^)
+        6'b000011: tmp = ~(in_data_a | in_data_b);  // SRA CHECKEAR ESTO, LA CONSIGNA PARECE ESTAR MAL
+        6'b000010: tmp = in_data_a < in_data_b; // SRL CHECKEAR ESTO, LA CONSIGNA PARECE ESTAR MAL
+        6'b100111: tmp = ~(in_data_a | in_data_b);  // NOR (~|)
     endcase
 end
 
