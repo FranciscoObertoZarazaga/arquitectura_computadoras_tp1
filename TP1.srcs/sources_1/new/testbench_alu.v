@@ -24,17 +24,19 @@ module testbench_alu
 
 #(
     // Parámetros
-    parameter NB_DATA = 4,
-    parameter NB_OPERATION = 6
+    parameter NB_INPUT_DATA = 4,   //Ancho Bus de datos de entrada
+    parameter NB_OUTPUT_DATA = NB_INPUT_DATA + 1,   //Ancho Bus de datos de salida
+    parameter NB_OPERATION = 6  //Ancho Bus de operaciones
 )
 (
     // Definición de Puertos del módulo
-    wire signed [NB_DATA-1:0] testbench_out_data
+    wire signed [NB_OUTPUT_DATA-1:0] testbench_out_data
 );
-    
+    integer i;
+    integer num_tests = 1000;
     // Declaración de señales internas del módulo
-    reg signed [NB_DATA-1:0] testbench_in_data_a;
-    reg signed [NB_DATA-1:0] testbench_in_data_b;
+    reg signed [NB_INPUT_DATA-1:0] testbench_in_data_a;
+    reg signed [NB_INPUT_DATA-1:0] testbench_in_data_b;
     reg [NB_OPERATION-1:0] testbench_in_operation;
     
     // Instancia del módulo ALU (DUT)
@@ -47,51 +49,110 @@ module testbench_alu
 
 
     // Proceso inicial para generar los estímulos
-    initial begin
+    initial begin        
         // Monitor para observar las señales
         $monitor(
         "time=%0d, in_data_a=%d, in_data_b=%d, in_operation=%b, out_data=%d",
          $time, testbench_in_data_a, testbench_in_data_b, testbench_in_operation, testbench_out_data
         );
+        
+        i = 0;
+        while (i < num_tests) begin
+            $display("Iteracion:", i);
+            // Estímulos
+    
+            // Probar Suma (6'b100000)
+            testbench_in_data_a = $random % 16;
+            testbench_in_data_b = $random % 16;
+            
+            // Probar Suma (6'b100000)
+            testbench_in_operation = 6'b100000;  // Suma
+            #10;  // Esperar 10 unidades de tiempo
+            if (testbench_out_data !== (testbench_in_data_a + testbench_in_data_b)) begin
+                $display("ERROR: La suma es incorrecta en el tiempo %0d", $time);
+                $display("  in_data_a: %d, in_data_b: %d, esperado: %d, obtenido: %d",
+                         testbench_in_data_a, testbench_in_data_b, 
+                         (testbench_in_data_a + testbench_in_data_b), testbench_out_data);
+                $finish;
+            end
 
-        // Estímulos
-
-        // Probar Suma (6'b100000)
-        testbench_in_data_a = 4'b0011;  // 3
-        testbench_in_data_b = 4'b0001;  // 1
-        testbench_in_operation = 6'b100000;  // Suma
-        #10;  // Esperar 10 unidades de tiempo
-
-        // Probar Resta (6'b100010)
-        testbench_in_operation = 6'b100010;  // Resta
-        #10;
-
-        // Probar AND (6'b100100)
-        testbench_in_operation = 6'b100100;  // AND
-        #10;
-
-        // Probar OR (6'b100101)
-        testbench_in_operation = 6'b100101;  // OR
-        #10;
-
-        // Probar XOR (6'b100110)
-        testbench_in_operation = 6'b100110;  // XOR
-        #10;
-
-        // Probar NOR (6'b100111)
-        testbench_in_operation = 6'b100111;  // NOR
-        #10;
-
-        // Probar SRA (revisado)
-        //tb_in_data_a = 4'b1100;  // -4 (en complemento a dos)
-        //tb_in_data_b = 4'b0001;  // No se usa
-        //tb_in_operation = 6'b000011;  // Desplazamiento aritmético a la derecha
-        //#10;
-
-        // Probar SRL (revisado)
-        //tb_in_data_a = 4'b1100;  // -4
-        //tb_in_operation = 6'b000010;  // Desplazamiento lógico a la derecha
-        //#10;
+            // Probar Resta (6'b100010)
+            testbench_in_operation = 6'b100010;  // Resta
+            #10;
+            if (testbench_out_data !== (testbench_in_data_a - testbench_in_data_b)) begin
+                $display("ERROR: La resta es incorrecta en el tiempo %0d", $time);
+                $display("  in_data_a: %d, in_data_b: %d, esperado: %d, obtenido: %d",
+                         testbench_in_data_a, testbench_in_data_b, 
+                         (testbench_in_data_a - testbench_in_data_b), testbench_out_data);
+                $finish;
+            end
+    
+            // Probar AND (6'b100100)
+            testbench_in_operation = 6'b100100;  // AND
+            #10;
+            if (testbench_out_data !== (testbench_in_data_a & testbench_in_data_b)) begin
+                $display("ERROR: El AND es incorrecto en el tiempo %0d", $time);
+                $display("  in_data_a: %d, in_data_b: %d, esperado: %d, obtenido: %d",
+                         testbench_in_data_a, testbench_in_data_b, 
+                         (testbench_in_data_a & testbench_in_data_b), testbench_out_data);
+                $finish;
+            end
+    
+            // Probar OR (6'b100101)
+            testbench_in_operation = 6'b100101;  // OR
+            #10;
+            if (testbench_out_data !== (testbench_in_data_a | testbench_in_data_b)) begin
+                $display("ERROR: El OR es incorrecto en el tiempo %0d", $time);
+                $display("  in_data_a: %d, in_data_b: %d, esperado: %d, obtenido: %d",
+                         testbench_in_data_a, testbench_in_data_b, 
+                         (testbench_in_data_a | testbench_in_data_b), testbench_out_data);
+                $finish;
+            end
+    
+            // Probar XOR (6'b100110)
+            testbench_in_operation = 6'b100110;  // XOR
+            #10;
+            if (testbench_out_data !== (testbench_in_data_a ^ testbench_in_data_b)) begin
+                $display("ERROR: El XOR es incorrecto en el tiempo %0d", $time);
+                $display("  in_data_a: %d, in_data_b: %d, esperado: %d, obtenido: %d",
+                         testbench_in_data_a, testbench_in_data_b, 
+                         (testbench_in_data_a ^ testbench_in_data_b), testbench_out_data);
+                $finish;
+            end
+    
+            // Probar NOR (6'b100111)
+            testbench_in_operation = 6'b100111;  // NOR
+            #10;
+            if (testbench_out_data !== ~(testbench_in_data_a | testbench_in_data_b)) begin
+                $display("ERROR: El NOR es incorrecto en el tiempo %0d", $time);
+                $display("  in_data_a: %d, in_data_b: %d, esperado: %d, obtenido: %d",
+                         testbench_in_data_a, testbench_in_data_b, 
+                         ~(testbench_in_data_a | testbench_in_data_b), testbench_out_data);
+                $finish;
+            end
+    
+            // Probar SRA (6'b000011)
+            testbench_in_operation = 6'b000011;  // SRA
+            #10;
+            if (testbench_out_data !== (testbench_in_data_a >>> testbench_in_data_b)) begin
+                $display("ERROR: El SRA es incorrecto en el tiempo %0d", $time);
+                $display("  in_data_a: %d, esperado: %d, obtenido: %d",
+                         testbench_in_data_a, (testbench_in_data_a >>> 1), testbench_out_data);
+                $finish;
+            end
+    
+            // Probar SRL (6'b000010)
+            testbench_in_operation = 6'b000010;  // SRL
+            #10;
+            if (testbench_out_data !== (testbench_in_data_a >> testbench_in_data_b)) begin
+                $display("ERROR: El SRL es incorrecto en el tiempo %0d", $time);
+                $display("  in_data_a: %d, esperado: %d, obtenido: %d",
+                         testbench_in_data_a, (testbench_in_data_a >> 1), testbench_out_data);
+                $finish;
+            end
+            
+            i = i + 1;
+        end
 
         // Finalizar la simulación
         $finish;
