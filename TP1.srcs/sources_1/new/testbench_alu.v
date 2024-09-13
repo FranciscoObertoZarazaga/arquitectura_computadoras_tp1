@@ -21,7 +21,6 @@
 
 
 module testbench_alu
-
 #(
     // Parámetros
     parameter NB_INPUT_DATA = 4,   //Ancho Bus de datos de entrada
@@ -29,15 +28,19 @@ module testbench_alu
     parameter NB_OPERATION = 6  //Ancho Bus de operaciones
 )
 (
-    // Definición de Puertos del módulo
-    wire signed [NB_OUTPUT_DATA-1:0] testbench_out_data
+    output wire signed [NB_OUTPUT_DATA-1:0] testbench_out_data
 );
+    
+    
+    // Definición de Puertos del módulo
     integer i;
     integer num_tests = 1000;
+    
     // Declaración de señales internas del módulo
     reg signed [NB_INPUT_DATA-1:0] testbench_in_data_a;
     reg signed [NB_INPUT_DATA-1:0] testbench_in_data_b;
     reg [NB_OPERATION-1:0] testbench_in_operation;
+
     
     // Instancia del módulo ALU (DUT)
     alu uut (  // UUT ~ Unit Under Test

@@ -38,17 +38,27 @@ module alu
 // Declaración de señales internas del módulo
 reg [NB_OUTPUT_DATA-1:0] tmp;
 
+// Definición de constantes para cada operación
+localparam [5:0] SUMA      = 6'b100000;
+localparam [5:0] RESTA     = 6'b100010;
+localparam [5:0] AND       = 6'b100100;
+localparam [5:0] OR        = 6'b100101;
+localparam [5:0] XOR       = 6'b100110;
+localparam [5:0] SRA       = 6'b000011;
+localparam [5:0] SRL       = 6'b000010;
+localparam [5:0] NOR       = 6'b100111;
+
 always @(*) begin
     case (in_operation)
-        6'b100000: tmp = in_data_a + in_data_b;  // SUMA (+)
-        6'b100010: tmp = in_data_a - in_data_b;  // RESTA (-)
-        6'b100100: tmp = in_data_a & in_data_b;  // AND (&)
-        6'b100101: tmp = in_data_a | in_data_b;  // OR (|)
-        6'b100110: tmp = in_data_a ^ in_data_b;  // XOR ~ EXCLUSIVE OR (^)
-        6'b000011: tmp = in_data_a >>> in_data_b;  // SRA ~ Slide Rigth Arithmetical (>>>)
-        6'b000010: tmp = in_data_a >> in_data_b; // SRL ~ Slide Rigth Logical (>>)
-        6'b100111: tmp = ~(in_data_a | in_data_b);  // NOR (~|)
-        default:   tmp = {NB_OUTPUT_DATA{1'b1}};  // Todos los bits en 1
+        SUMA:     tmp = in_data_a + in_data_b;  // Suma
+        RESTA:    tmp = in_data_a - in_data_b;  // Resta
+        AND:   tmp = in_data_a & in_data_b;  // AND
+        OR:    tmp = in_data_a | in_data_b;  // OR
+        XOR:   tmp = in_data_a ^ in_data_b;  // XOR
+        SRA:   tmp = in_data_a >>> in_data_b;  // SRA (Shift Right Arithmetic)
+        SRL:   tmp = in_data_a >> in_data_b;   // SRL (Shift Right Logical)
+        NOR:   tmp = ~(in_data_a | in_data_b);  // NOR
+        default:  tmp = {NB_OUTPUT_DATA{1'b1}};  // Todos los bits en 1
     endcase
 end
 
