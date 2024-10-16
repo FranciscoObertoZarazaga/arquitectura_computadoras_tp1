@@ -29,14 +29,26 @@ module top
 )
 (   
     // Definición de Puertos del módulo
+    input wire clk_in1,
+    input wire reset,
     input wire signed [NB_SWITCH-1:0] in_switch,
     input wire in_boton_1,
     input wire in_boton_2,
     input wire in_boton_3,
+    input wire in_boton_4,
     output wire signed [NB_INPUT_DATA:0] out_result
 );
+    
+    wire clk_out1;                // Señal de reloj de salida generada por el Clock Wizard (100 MHz)
+    
+    // Instancia del "Clock Wizard"
+    clk_wiz_0 clk_wiz_inst (
+        .clk_out1(clk_out1),      // Salida del reloj (100 MHz)
+        .reset(reset),            // Reset input
+        .clk_in1(clk_in1)         // Reloj de entrada (50 MHz)
+    );
 
-    // Señales internas
+    // Señales internas    
     reg signed [NB_INPUT_DATA-1:0] data_a;
     reg signed [NB_INPUT_DATA-1:0] data_b;
     reg [NB_OPERATION-1:0] operation;
@@ -50,18 +62,20 @@ module top
     );
 
     // Lógica de control basada en los botones
-    always @(in_boton_1 or in_boton_2 or in_boton_3) begin
+    always @(posedge clk_out1) begin
         if (in_boton_1) begin
             data_a <= in_switch[NB_INPUT_DATA-1:0];  // Cargar los 4 bits de switch en data_a
         end
-        else if (in_boton_2) begin
+        if (in_boton_2) begin
             data_b <= in_switch[NB_INPUT_DATA-1:0];  // Cargar los 4 bits de switch en data_b
         end
-        else if (in_boton_3) begin
+        if (in_boton_3) begin
             operation <= in_switch[NB_OPERATION-1:0];  // Cargar los 6 bits del switch en operation
         end
+        if (in_boton_4) begin
+            operation <= 6'b000000;  // Reset
+        end
+        
     end
-
-
 
 endmodule
