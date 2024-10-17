@@ -25,6 +25,7 @@ module top
     // Parámetros
     parameter NB_SWITCH = 6,
     parameter NB_INPUT_DATA = 4,
+    parameter NB_OUTPUT_DATA = NB_INPUT_DATA,
     parameter NB_OPERATION = 6
 )
 (   
@@ -36,7 +37,7 @@ module top
     input wire in_boton_2,
     input wire in_boton_3,
     input wire in_boton_4,
-    output wire signed [NB_INPUT_DATA:0] out_result
+    output wire signed [NB_OUTPUT_DATA-1:0] out_result
 );
     
     wire clk_out1;                // Señal de reloj de salida generada por el Clock Wizard (100 MHz)
