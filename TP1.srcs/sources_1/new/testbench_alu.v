@@ -24,7 +24,7 @@ module testbench_alu
 #(
     // Parámetros
     parameter NB_INPUT_DATA = 4,   //Ancho Bus de datos de entrada
-    parameter NB_OUTPUT_DATA = NB_INPUT_DATA + 1,   //Ancho Bus de datos de salida
+    parameter NB_OUTPUT_DATA = NB_INPUT_DATA,   //Ancho Bus de datos de salida
     parameter NB_OPERATION = 6  //Ancho Bus de operaciones
 )
 (

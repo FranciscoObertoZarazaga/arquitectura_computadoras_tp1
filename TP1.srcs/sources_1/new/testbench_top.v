@@ -24,10 +24,11 @@ module testbench_top
     // Parámetros
     parameter NB_SWITCH = 6,
     parameter NB_INPUT_DATA = 4,
+    parameter NB_OUTPUT_DATA = NB_INPUT_DATA,   //Ancho Bus de datos de salida
     parameter NB_OPERATION = 6
 )
 (
-    output wire signed [NB_INPUT_DATA:0] test_result  // Resultado de la ALU (salida)
+    output wire signed [NB_OUTPUT_DATA-1:0] test_result  // Resultado de la ALU (salida)
 );
 
     // Señales internas
